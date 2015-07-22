@@ -1,0 +1,17 @@
+2010-04-27
+1.remove qprocess.h. EZX does not have this
+2.add ezx_vr.h
+
+2010-04-17
+1.qprocess.h from libqutil
+2.Modify ZLRS.h //ZGlobal
+3.ZIMethod::showInputWidget
+4.remove ZApplication::enableHardKeyEventFilter( bool enable = true );
+
+
+2010-04-07
+1.qglobal.h: qt-4.6 qMax qMin qBound;
+2.add TAPI headers from ZN5 offical SDK (seems like). But lacks of some headers e.g. EZX_Types.h, so i modified some tapi headers, Mostly defining the type;
+3.add SHARE_TOOL.h, SHARE_MethodDlg.h, BT_UI_CommonDLG.h. I can invoke bluetooth sending dialog using SHARE_TOOL.h, but still don't know how to send files;
+
+

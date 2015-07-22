@@ -1,0 +1,15 @@
+# sdl pkg-config source file
+
+prefix=/opt/toolchains/motoezx
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: sdl
+Description: Simple DirectMedia Layer is a cross-platform multimedia library designed to provide low level access to audio, keyboard, mouse, joystick, 3D hardware via OpenGL, and 2D video framebuffer.
+Version: 1.2.14
+Requires:
+Conflicts:
+Libs: -L${libdir} -Wl,-rpath,${libdir} -lSDLmain -lSDL  -L/opt/toolchains/motoezx/lib/ezx -Wl,-rpath-link,/opt/toolchains/motoezx/lib/ezx,-rpath-link,/opt/toolchains/motoezx/lib/ezx/ezx/lib,-rpath-link,/opt/toolchains/motoezx/lib/ezx/ezx/lib/inputmethods -L/opt/toolchains/motoezx/lib/ezx/ -L/opt/toolchains/motoezx/lib/ezx/ezx/lib -lezxappbase -lpthread
+Libs.private: -lSDLmain -lSDL  -L/opt/toolchains/motoezx/lib/ezx -Wl,-rpath-link,/opt/toolchains/motoezx/lib/ezx,-rpath-link,/opt/toolchains/motoezx/lib/ezx/ezx/lib,-rpath-link,/opt/toolchains/motoezx/lib/ezx/ezx/lib/inputmethods -L/opt/toolchains/motoezx/lib/ezx/ -L/opt/toolchains/motoezx/lib/ezx/ezx/lib -lezxappbase -lpthread  -lm -ldl -lpthread
+Cflags: -I${includedir}/SDL -D_GNU_SOURCE=1 -DQWS -Dmain=SDL_main -D_REENTRANT

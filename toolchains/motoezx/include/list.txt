@@ -1,0 +1,13 @@
+EZX_SDK_0.3 的目录
+
+2,140 	alarmcilent.h		闹钟客户端
+7,928 	ezxinfo.h		EZX扩展函数列表
+2,231 	ezxutilprogressbar.h	EZX进度条
+4,313 	zsms.h			短信客户端
+3,189 	zconfig.h		Conf文件配置
+4,596 	zsetupdefs.h		常规定义
+1,212 	ezxpmapi.h		电源管理api
+1,461 	ezxtapi.h		TAPI扩展函数
+  931 	ezxsoundmanage.h	声音API
+2,765 	qwallpaper.h		墙纸
+

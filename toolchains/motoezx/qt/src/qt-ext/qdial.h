@@ -1,0 +1,1 @@
+../../include/qt-ext/qdial.h

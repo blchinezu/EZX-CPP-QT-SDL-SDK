@@ -1,0 +1,35 @@
+#!/bin/sh
+WRAP_COMMAND="/usr/bin/gcc"
+WRAP_LDFLAGS="-L/opt/toolchains/motoezx/crosstool/lib -Wl,-rpath-link,/opt/toolchains/motoezx/crosstool/lib -L/opt/toolchains/motoezx/crosstool/arm-linux-gnu/lib -Wl,-rpath-link,/opt/toolchains/motoezx/crosstool/arm-linux-gnu/lib"
+WRAP_CPPFLAGS="-I/opt/toolchains/motoezx/crosstool/include -I/opt/toolchains/motoezx/crosstool/lib/gcc-lib/arm-linux-gnu/3.3.6/include"
+
+# determine what operation we are performing
+preproc=yes
+link=yes
+for opt in "$@"; do
+    case "$opt" in
+    -print* | -dump* | --version)
+        link=no
+        preproc=no
+        ;;
+    -c | -S | -E | -M)
+        link=no
+        ;;
+    esac
+done
+
+# determine flags to add
+if test $# -gt 0; then
+    if test "$preproc" = "yes"; then
+        WRAP_FLAGS="$WRAP_CPPFLAGS $WRAP_FLAGS"
+    fi
+    if test "$link" = "yes"; then
+        WRAP_FLAGS="$WRAP_LDFLAGS $WRAP_FLAGS"
+    fi
+fi
+
+# run command
+#echo "[CMD] $@" >> /tmp/wrap-toolchain.log
+#echo "[WRAP_FLAGS] $WRAP_FLAGS" >> /tmp/wrap-toolchain.log
+$WRAP_COMMAND $WRAP_FLAGS "$@"
+exit $?

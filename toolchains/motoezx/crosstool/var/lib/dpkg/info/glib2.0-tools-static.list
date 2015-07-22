@@ -1,0 +1,6 @@
+/.
+/bin
+/bin/gobject-query
+/bin/glib-mkenums
+/bin/glib-genmarshal
+/bin/glib-gettextize

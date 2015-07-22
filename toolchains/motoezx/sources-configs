@@ -1,0 +1,126 @@
+#!/bin/bash
+
+
+###############################################################################
+
+zlib-1.2.3:
+CC='arm-linux-gcc'
+CFLAGS='-O2 -pipe -mtune=iwmmxt -march=iwmmxt'
+./configure --shared --prefix=/home/eug/ming/builds/zlib-1.2.3
+
+###############################################################################
+
+ncurses-5.6:
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/ncurses-5.6 --build=x86_64-unknown-linux-gnu --host=arm-linux --without-ada --with-shared --without-profile --without-debug --without-termlib --without-gpm --without-sysmouse
+
+###############################################################################
+
+expat-2.0.1:
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/expat-2.0.1 --build=x86_64-unknown-linux-gnu --host=arm-linux
+
+###############################################################################
+
+readline-5.2 # (after installing ncurses to arm-linux):
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/readline-5.2 --build=x86_64-unknown-linux-gnu --host=arm-linux --enable-shared --with-curses
+
+###############################################################################
+
+jpeg-6b
+# (edit config.guess (make it compatible with x86_64-unknown),
+# Makefile (for arm-linux), don't set cross-compile for configure (it will failed)):
+./configure --prefix=/home/eug/ming/builds/jpeg-6b --enable-shared --without-x
+
+###############################################################################
+
+SDL-1.2.13:
+CFLAGS='-O2 -pipe -mcpu=iwmmxt -mtune=iwmmxt'
+CXXFLAGS="$CFLAGS"
+NM='arm-linux-nm'
+LD='arm-linux-ld'
+CC='arm-linux-gcc'
+CXX='arm-linux-g++'
+RANLIB='arm-linux-ranlib'
+AR='arm-linux-ar'
+./configure --enable-video-motoezx --disable-video-dummy --disable-video-fbcon --disable-video-tga --disable-arts --disable-esd --disable-alsa --disable-cdrom --disable-video-x11 --disable-nasm --host=arm-linux --build=x86_64-unknown-linux-gnu --prefix=/home/eug/ming/builds/SDL-1.2.13
+
+###############################################################################
+
+SDL-1.3.0:
+CFLAGS='-O2 -pipe -mcpu=iwmmxt -mtune=iwmmxt'
+CXXFLAGS="$CFLAGS"
+NM='arm-linux-nm'
+LD='arm-linux-ld'
+CC='arm-linux-gcc'
+CXX='arm-linux-g++'
+RANLIB='arm-linux-ranlib'
+AR='arm-linux-ar'
+./configure --enable-video-motoezx --disable-haptic --disable-video-dummy --disable-video-fbcon --disable-video-tga --disable-arts --disable-esd --disable-alsa --disable-cdrom --disable-video-x11 --disable-nasm --host=arm-linux --build=x86_64-unknown-linux-gnu --prefix=/home/brucelee/Desktop/sdl-build
+
+###############################################################################
+
+libpng-1.2.24:
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/libpng-1.2.24 --build=x86_64-unknown-linux-gnu --host=arm-linux --enable-shared
+
+###############################################################################
+
+libmikmod-3.1.11:
+CC='arm-linux-gcc'
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/libmikmod-3.1.11 --build=x86_64-unknown-linux-gnu --host=arm-linux --enable-shared --without-x --disable-af --disable-alsa --enable-oss --disable-esd --disable-sam9407 --disable-ultra --disable-debug --enable-threads
+
+###############################################################################
+
+libogg-1.1.3:
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/libogg-1.1.3 --build=x86_64-unknown-linux-gnu --host=arm-linux --enable-shared
+
+###############################################################################
+
+libvorbis-1.2.0 # (after libogg):
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/libvorbis-1.2.0 --build=x86_64-unknown-linux-gnu --host=arm-linux --enable-shared
+
+###############################################################################
+
+lua-5.0.3: # use config
+
+###############################################################################
+
+libtiff-3.8.2:
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+CXXFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/libtiff-3.8.2 --build=x86_64-unknown-linux-gnu --host=arm-linux --enable-shared --without-x
+
+###############################################################################
+
+SDL_image-1.2.6 # (after SDL, libpng, libtiff, jpeg):
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/SDL_image-1.2.6 --build=x86_64-unknown-linux-gnu --host=arm-linux --enable-shared --with-sdl-prefix=/home/eug/ming/builds/SDL-1.2.13
+
+###############################################################################
+
+smpeg-0.4.5-svn:
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/smpeg-0.4.5 --build=x86_64-unknown-linux-gnu --host=arm-linux --enable-shared --with-sdl-prefix=/home/eug/ming/builds/SDL-1.2.13 --disable-debug --disable-mmx --disable-ati --disable-gtk-player --disable-opengl-player --without-x --without-gtk
+
+###############################################################################
+
+SDL_mixer-1.2.8 (after smpeg):
+CFLAGS='-O2 -pipe -mtune=iwmmxt -mcpu=iwmmxt'
+./configure --prefix=/home/eug/ming/builds/SDL_mixer-1.2.8 --build=x86_64-unknown-linux-gnu --host=arm-linux --enable-shared --with-sdl-prefix=/home/eug/ming/builds/SDL-1.2.13 --with-smpeg-prefix=/home/eug/ming/builds/smpeg-0.4.5
+
+###############################################################################
+
+stratagus-2.2.4:
+CFLAGS='-O2 -pipe -mcpu=iwmmxt -mtune=iwmmxt'
+CXXFLAGS='-O2 -pipe -mcpu=iwmmxt -mtune=iwmmxt'
+SDLCONFIG=$SDK_DIR/bin/sdl-config
+./configure --build=x86_64-unknown-linux-gnu --host=arm-linux --without-x --with-bz2 --with-vorbis --with-mikmod --enable-motoezx --prefix=/home/a1200/build/stratagus/wargus-2.2.5.3
+
+###############################################################################
+
+

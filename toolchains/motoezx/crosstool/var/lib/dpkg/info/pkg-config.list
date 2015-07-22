@@ -1,0 +1,9 @@
+/.
+/share
+/share/man
+/share/man/man1
+/share/man/man1/pkg-config.1
+/share/aclocal
+/share/aclocal/pkg.m4
+/bin
+/bin/pkg-config

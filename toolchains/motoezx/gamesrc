@@ -1,0 +1,5 @@
+# game's libraries
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+# uncomment next line if you wanna 270-degrees clockwise rotated screen
+#export SDL_QT_INVERT_ROTATION=1

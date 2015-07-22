@@ -1,0 +1,5 @@
+for h in ../../include/qt-ext/*.h
+do
+  echo $h
+done
+

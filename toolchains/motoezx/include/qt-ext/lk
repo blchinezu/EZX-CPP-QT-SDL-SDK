@@ -1,0 +1,6 @@
+for h in ../../include/qt-ext/*.h
+do
+  echo $h
+  ln -sf $h
+done
+

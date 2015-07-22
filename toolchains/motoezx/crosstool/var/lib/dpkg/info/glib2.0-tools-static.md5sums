@@ -1,0 +1,4 @@
+c35e2538d193bddd1ef07bb19da6225e  opt/toolchains/motoezx/crosstool/bin/gobject-query
+1439d71397dc431375a7264638ff2333  opt/toolchains/motoezx/crosstool/bin/glib-mkenums
+aefef226f8c65bc1071c807bdc213cd2  opt/toolchains/motoezx/crosstool/bin/glib-genmarshal
+63c37515e581e4128f863d630484d48a  opt/toolchains/motoezx/crosstool/bin/glib-gettextize

@@ -1,0 +1,8 @@
+800a9ef145f2fac041e9d3e924cea0b9  opt/toolchains/motoezx/crosstool/share/file/magic
+54b70d6ecc062a9fb62120cdc5ce6f52  opt/toolchains/motoezx/crosstool/share/file/magic.mgc
+e6c341e8a4c5572c611ce1a0c0e01bcb  opt/toolchains/motoezx/crosstool/share/file/magic.mime.mgc
+9c3cd835e42fdc92501ee8ba04182f0d  opt/toolchains/motoezx/crosstool/share/file/magic.mime
+06d6980a85d99998dacf1ae500be23e3  opt/toolchains/motoezx/crosstool/share/man/man1/file.1
+5c16f56248e9cf7702ad1e5b277f66c0  opt/toolchains/motoezx/crosstool/share/man/man4/magic.4
+b9d58f630ec8854ae1254e1fcb0476a8  opt/toolchains/motoezx/crosstool/share/man/man3/libmagic.3
+4d70bb43a3f7fd1591dcc81a18bfbf00  opt/toolchains/motoezx/crosstool/bin/file
