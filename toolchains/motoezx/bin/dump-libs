@@ -1,0 +1,30 @@
+#!/bin/bash
+# A script to create object dumps of library files 
+
+CROSS_PREFIX="arm-linux-gnu"
+DUMP_FILE_SUFIX=""
+LIBS_PATH="/opt/toolchains/motoezx/lib/ezx/ezx/lib"
+ENV_PATH="/opt/toolchains/motoezx/setenv-a1200.sh ezx"
+
+if [ "$1" = "" ]; then
+	printf "\n Syntax: `basename $0` <DUMP_PATH>\n\n To dump here use: `basename $0` .\n\n"
+else
+	. $ENV_PATH
+	
+	args="$@"
+	if [ "${args:0:1}" = "/" ]; then DUMP_PATH="$args"; else DUMP_PATH="`pwd`/$args"; fi
+	
+	foo=$( { mkdir -p "${DUMP_PATH}/nm" "${DUMP_PATH}/objdump"; } 2>&1 )
+	if [ ! -d "${DUMP_PATH}/nm" ] || [ ! -d "${DUMP_PATH}/objdump" ]; then
+		printf "\n Could not create folders. Do you have write permissions?\n\n"; exit
+	fi
+	
+	cd "$LIBS_PATH"
+	list="`ls *.so.1.0.0`"
+	for i in $list; do
+		echo "$i"
+		$CROSS_PREFIX-nm -aDC $i > "${DUMP_PATH}/nm/$i$DUMP_FILE_SUFIX"
+		$CROSS_PREFIX-objdump -T --demangle $i > "${DUMP_PATH}/objdump/$i$DUMP_FILE_SUFIX"
+	done
+fi
+

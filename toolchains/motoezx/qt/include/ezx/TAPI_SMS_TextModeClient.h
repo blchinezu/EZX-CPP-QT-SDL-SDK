@@ -1,0 +1,1 @@
+tapi/TAPI_SMS_TextModeClient.h

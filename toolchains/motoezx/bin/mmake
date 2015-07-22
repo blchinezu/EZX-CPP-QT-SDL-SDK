@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ "$1" != "" ]; then
+	printf "\n"
+	printf "\n > Removing old project file:"
+		for each in `ls -1 | grep -i '\.pro'`; do
+			rm -f $each
+			printf "\n    - $each"
+		done
+	printf "\n > Generating project file: $@.pro"
+		progen -o "$@.pro"
+	printf "\n > Removing old Makefile:"
+		for each in `ls -1 | grep -i 'makefile'`; do
+			rm -f $each
+			printf "\n    - $each"
+		done
+	printf "\n > Creating Makefile"
+		tmake "$@.pro" -o Makefile
+	printf "\n > DONE\n\n"
+else
+	printf "\n\nPlease enter a project name as argument.\n\n"
+fi
+

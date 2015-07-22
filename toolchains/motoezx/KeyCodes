@@ -1,0 +1,30 @@
+A1200 Key table
+
+-----------------------------------------------------------
+| A1200   |  N  |  sdl name   | mod N | mod sdl | qt code |
+-----------------------------------------------------------
+| Call    | 32  | SDLK_SPACE  |  102  | SDLK_f  | 4144	  |
+| Hangup  | 27  | SDLK_ESCAPE |  97   | SDLK_a  | 4145	  |
+| Camera  | 19  | SDLK_PAUSE  |  101  | SDLK_e  | 4148	  |
+| Vol '+' | 43  | SDLK_PLUS   |  99   | SDLK_c  | 4118	  |
+| Vol '-' | 45  | SDLK_MINUS  |  100  | SDLK_d  | 4119	  |
+| Fire    | 13  | SDLK_RETURN |  98   | SDLK_b  | 4100	  |
+| Up      | 275 | SDLK_RIGHT  |  106  | SDLK_j  | 4115	  |
+| Down    | 276 | SDLK_LEFT   |  105  | SDLK_i  | 4117	  |
+| Right   | 274 | SDLK_DOWN   |  104  | SDLK_h  | 4116	  |
+| Left    | 273 | SDLK_UP     |  103  | SDLK_g  | 4114	  |
+-----------------------------------------------------------
+
+A1200 SDL mod key = key between vol+ & vol- (select)
+
+--------------------------------------
+| ROKR E6 |  N  | sdl name | qt code |
+--------------------------------------
+| Forward | 113 |  SDLK_q  | 4172	 |
+| Pause   | 112 |  SDLK_p  | 4169	 |
+| Back    | 111 |  SDLK_o  | 4171	 |
+| un.Call | 114 |  SDLK_r  | 4147	 |
+| un.Hang | 	|  		   | 4173	 |
+--------------------------------------
+
+ROKR E6 SDL mod key = key under hangup (shortcut)
