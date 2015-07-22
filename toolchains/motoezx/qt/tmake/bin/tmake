@@ -292,7 +292,7 @@ sub find_template {
 	}
 	return ($d . $filename) if ( -f &fix_path($d . $filename) );
     }
-    &tmake_error("Template file " . $filename . " not found");
+    &tmake_error("Template file " . $filename . " not found\n             Path: " . &fix_path($p));
 }
 
 
@@ -420,6 +420,10 @@ sub Now {
     ($sec,$min,$hour,$mday,$mon,$year) = localtime(time());
     $text = sprintf("%02d:%02d, %4d/%02d/%02d",
 		    $hour, $min, 1900+$year, 1+$mon, $mday);
+}
+
+sub get_sdk_version {
+    $text = $ENV{SDK_VERSION};
 }
 
 

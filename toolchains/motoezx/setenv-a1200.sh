@@ -1,7 +1,17 @@
 #!/bin/bash
 
-if [ -z "${1,,}" ]; then echo " > Syntax: . setenv-a1200.sh <ezx|sdl>"; else mod="$1"
+#if [ "$HOSTNAME" = "Vasile" ] && [ "$USER" = "brucelee" ]; then
+if [ "$HOSTNAME" = "ubuntu" ] && [ "$USER" = "ubuntu" ]; then
+	export SDK_VERSION="`/bin/date +'%Y/%m/%d'`"
+else
+	export SDK_VERSION="2011/08/31"
+fi
 
+syntax='. setenv-a1200.sh <ezx|sdl> <lib> <shared|static>'
+mod=''
+
+if [ "$1" != "ezx" ] && [ "$1" != "sdl" ]; then printf "\n > Syntax: $syntax\n\n"; else mod="$1"
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]'$mod' SDK\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 # SDK Dirs
 	SDK_PATH=/opt/toolchains/motoezx
@@ -27,31 +37,36 @@ if [ -z "${1,,}" ]; then echo " > Syntax: . setenv-a1200.sh <ezx|sdl>"; else mod
 
 # Crosstool Vars
 	QMAKESPEC=$SDK_QT_DIR/mkspecs/qws/linux-gnu-ezx-g++
-	case "${mod,,}" in sdl) TMAKEPATH="$SDK_QT_DIR/tmake/lib/qws/linux-gnu-ezx-sdl-g++" ;; ezx) TMAKEPATH="$SDK_QT_DIR/tmake/lib/qws/linux-gnu-ezx-g++" ;; esac
+	case "$mod" in sdl) TMAKEPATH="$SDK_QT_DIR/tmake/lib/qws/linux-gnu-ezx-sdl-g++" ;; ezx) TMAKEPATH="$SDK_QT_DIR/tmake/lib/qws/linux-gnu-ezx-g++" ;; esac
 	CROSSTOOL_DIR=$SDK_PATH/crosstool
 	PATH=$SDK_QT_DIR/bin:$SDK_QT_DIR/tmake/bin:$CROSSTOOL_DIR/bin:$SDK_PATH/bin:$PATH
 	export QMAKESPEC TMAKEPATH CROSSTOOL PATH
 
 # SDL Vars
-	case "${mod,,}" in sdl)
+	case "$mod" in sdl)
 		SDK_SDL_INC_DIR=$SDK_INC_DIR/SDL
 		SDLCONFIG=$SDK_DIR/bin/sdl-config
-		SDK_SDL_CFLAGS=`$SDLCONFIG --cflags`
-		SDK_SDL_LFLAGS=`$SDLCONFIG --libs`
+		SDK_SDL_CFLAGS=`sdl-config --cflags`
+		SDK_SDL_LFLAGS=`sdl-config --libs`
 		export SDK_SDL_INC_DIR SDLCONFIG SDK_SDL_CFLAGS SDK_SDL_LFLAGS
 	;; esac
 
 # Crosscompiling bins
 	base=arm-linux-gnu
+	CROSS_COMPILE=$base
 	CC=${base}-gcc			; SDK_CC=$CC			;
 	CXX=${base}-g++			; SDK_CXX=$CXX			;
 	LD=${base}-ld			; SDK_LD=$LD			;
 	AR=${base}-ar			; SDK_AR=$AR			;
 	AS=${base}-as			; SDK_AS=$AS			;
-	OC=${base}-objcopy		; SDK_OC=$OC			;
+	OC=${base}-objcopy		; SDK_OC=$OC			; SDK_OBJCOPY=$OC	;
 	RANLIB=${base}-ranlib	; SDK_RANLIB=$RANLIB	;
 	STRIP=${base}-strip		; SDK_STRIP=$STRIP		;
-	export CC CXX LD AR AS OC RANLIB STRIP SDK_CC SDK_CXX SDK_LD SDK_AR SDK_AS SDK_OC SDK_RANLIB SDK_STRIP
+	export CROSS_COMPILE CC CXX LD AR AS OC RANLIB STRIP SDK_CC SDK_CXX SDK_LD SDK_AR SDK_AS SDK_OC SDK_OBJCOPY SDK_RANLIB SDK_STRIP
+
+# Configure args
+	SDK_CONFIGURE="--build=x86_64-unknown-linux-gnu --host=arm-linux --prefix=`pwd`/PREFIX"
+	export SDK_CONFIGURE
 
 # Compiling flags
 	ARCH=iwmmxt
@@ -66,10 +81,11 @@ if [ -z "${1,,}" ]; then echo " > Syntax: . setenv-a1200.sh <ezx|sdl>"; else mod
 
 # Clear screen binary from host
 	export clear=/usr/bin/clear
+	alias clear='$clear'
 
 
+	printf "\n $mod environment loaded.\n\n"
 
 #	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SDK_LIB_DIR
-
 fi
 
