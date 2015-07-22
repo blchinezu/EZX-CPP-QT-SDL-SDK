@@ -1,0 +1,5 @@
+libgettextpo 0 gettext
+libasprintf 0 gettext
+libgnuintl 3 gettext
+libgettextlib 0.14.5 gettext
+libgettextsrc 0.14.5 gettext

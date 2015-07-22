@@ -1,0 +1,1 @@
+#ifndef RES_ICON_READER_H#define RES_ICON_READER_H#include "ezxres.h"#endif //RES_ICON_READER_H

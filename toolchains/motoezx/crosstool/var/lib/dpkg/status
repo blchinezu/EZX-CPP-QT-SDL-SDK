@@ -1,0 +1,136 @@
+Package: fakeroot
+MkEzx-Sync: 1
+Description: Gives a fake root environment
+ This package is intended to enable something like:
+ dpkg-buildpackage -rfakeroot
+ i.e. to remove the need to become root for a package build.
+ This is done by setting LD_PRELOAD to libfakeroot.so,
+ which provides wrappers around getuid, chown, chmod, mknod,
+ stat, and so on, thereby creating a fake root environment.
+ .
+ fakeroot requires SYSV IPC or TCP to operate.
+Version: 1.5.8-0mkezx2
+Architecture: i386
+Status: install ok installed
+
+Package: m4
+MkEzx-Sync: 1
+Description: a macro processing language
+ GNU `m4' is an implementation of the traditional UNIX macro
+ processor.  It is mostly SVR4 compatible, although it has some
+ extensions (for example, handling more than 9 positional parameters to
+ macros).  `m4' also has builtin functions for including files, running
+ shell commands, doing arithmetic, etc.  Autoconf needs GNU `m4' for
+ generating `configure' scripts, but not for running them.
+Version: 1.4.6-0mkez2
+Architecture: i386
+Status: install ok installed
+
+Package: autoconf
+Depends: m4
+MkEzx-Sync: 1
+Description: automatic configure script builder
+ The standard for FSF source packages.  This is only useful if you
+ write your own programs or if you extensively modify other people's
+ programs.
+ .
+ For an extensive library of additional Autoconf macros, install the
+ `autoconf-archive' package.  For a book that explains how to use
+ Autoconf, Automake, and Libtool in conjunction, install the
+ `autobook' package.
+ .
+ The Debian project regards the full documentation for autoconf to be
+ non-free, so it is not included in Debian.  Nevertheless, the
+ non-free distribution that accompanies Debian includes the manual in
+ its `autoconf-doc' package.
+ .
+ This version of autoconf is not compatible with scripts meant for
+ Autoconf 2.13 or earlier.  If you need support for such scripts,
+ you must also install the autoconf2.13 package.
+Version: 2.60-0mkezx2
+Architecture: i386
+Status: install ok installed
+
+Package: automake
+Depends: autoconf
+MkEzx-Sync: 1
+Description: A tool for generating GNU Standards-compliant Makefiles
+ Automake is a tool for automatically generating `Makefile.in's from
+ files called `Makefile.am'.
+ .
+ The goal of Automake is to remove the burden of Makefile maintenance
+ from the back of the individual GNU maintainer (and put it on the back
+ of the Automake maintainer).
+ .
+ The `Makefile.am' is basically a series of `make' macro definitions
+ (with rules being thrown in occasionally).  The generated
+ `Makefile.in's are compliant with the GNU Makefile standards.
+ .
+ Automake 1.10 fails to work in a number of situations that Automake
+ 1.4, 1.6, 1.7, 1.8 and 1.9 did, so has been renamed so that the
+ previous version can continue to be made available.
+Version: 1.9.6-0mkezx2
+Architecture: i386
+Status: install ok installed
+
+Package: libtool
+MkEzx-Sync: 1
+Description: Generic library support script
+ This is GNU libtool, a generic library support script.  Libtool hides
+ the complexity of generating special library types (such as shared
+ libraries) behind a consistent interface.  To use libtool, add the
+ new generic library building commands to your Makefile, Makefile.in,
+ or Makefile.am.  See the documentation for details.  Libtool supports
+ building static libraries on all platforms.
+ .
+ Libtool supports generation of C, C++, Fortran and Java libraries.
+Version: 1.5.22-0mkezx2
+Architecture: i386
+Status: install ok installed
+
+Package: pkg-config
+MkEzx-Sync: 1
+Description: manage compile and link flags for libraries
+ pkg-config is a system for managing library compile and link flags that
+ works with automake and autoconf.
+ .
+ Increasingly libraries ship with ".pc" files that allow querying of the
+ compiler and linker flags needed to use them through the pkg-config(1)
+ program.
+Version: 0.21-0mkezx3
+Architecture: i386
+Status: install ok installed
+
+Package: gettext
+MkEzx-Sync: 1
+Description: GNU Internationalization utilities
+ Interesting for authors or maintainers of other packages or programs
+ which they want to see internationalized.
+Version: 0.14.5-0mkezx5
+Architecture: i386
+Status: install ok installed
+
+Package: crosstool-ezx
+Version: 3.3.6-0mkezx1
+Architecture: i386
+Status: install ok installed
+
+Package: glib2.0-tools-static
+Description: Development files for the GLib library (static version)
+Version: 2.12.7-0mkezx1
+Architecture: i386
+Status: install ok installed
+
+Package: file-static
+Description: Determines file type using "magic" numbers (static version)
+ File tests each argument in an attempt to classify it.  There are three
+ sets of tests, performed in this order: filesystem tests, magic number
+ tests, and language tests.  The first test that succeeds causes the
+ file type to be printed.
+ .
+ Starting with version 4, the file command is not much more than a wrapper
+ around the "magic" library.
+Version: 4.17-0mkezx1
+Architecture: i386
+Status: install ok installed
+

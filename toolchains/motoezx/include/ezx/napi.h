@@ -125,6 +125,14 @@ int NAPI_SetBrokenHandler(void (*handler)(int reserve) );
 int NAPI_SetSwitchHandler(void (*handler)(int reserve) );
 
 /**
+ *@fn int NAPI_IsProfileValid( char* profileName );
+ *@brief Check if the profile name exists.
+ *@param profileName which profile check for
+ *@retval UNKNOWN
+ */
+int NAPI_IsProfileValid( char* profileName );
+
+/**
  *@fn int NAPI_OpenLink(NAPI_OPEN_MODE_T OpenMode, char* profileName)
  *@brief start connection per request
  *@param OpenMode the style the application want to use to start the
@@ -165,6 +173,14 @@ void NAPI_DeInit(void);
  * or ::NAPI_RESULT_SWITCH, or ::NAPI_RESULT_NOTHING.
  */
 int NAPI_Poll(void);
+
+/**
+ *@fn int NAPI_Fini(void)
+ *@brief End the connection
+ *@param NONE
+ *@return UNKNOWN
+ */
+void NAPI_Fini(void);
 
 /**
  *@fn int NAPI_GetLinkInfo(char* profileName, int length, int* linkType)

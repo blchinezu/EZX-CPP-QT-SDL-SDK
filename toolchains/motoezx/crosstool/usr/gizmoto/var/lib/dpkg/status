@@ -1,0 +1,10 @@
+Package: ncurses-base
+MkEzx-Sync: 1
+Description: Descriptions of common terminal types
+ This package contains what should be a reasonable subset of terminal
+ definitions, including: ansi, dumb, linux, rxvt, screen, sun, vt100,
+ vt102, vt220, vt52, and xterm.
+Version: 5.5-0mkezx5
+Architecture: arm
+Status: install ok installed
+

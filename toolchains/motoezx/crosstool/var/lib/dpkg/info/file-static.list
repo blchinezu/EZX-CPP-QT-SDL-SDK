@@ -1,0 +1,17 @@
+/.
+/share
+/share/file
+/share/file/magic
+/share/file/magic.mgc
+/share/file/magic.mime.mgc
+/share/file/magic.mime
+/share/man
+/share/man/man1
+/share/man/man1/file.1
+/share/man/man4
+/share/man/man4/magic.4
+/share/man/man5
+/share/man/man3
+/share/man/man3/libmagic.3
+/bin
+/bin/file

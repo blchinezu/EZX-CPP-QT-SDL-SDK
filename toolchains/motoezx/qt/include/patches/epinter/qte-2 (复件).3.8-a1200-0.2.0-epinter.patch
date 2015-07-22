@@ -1,0 +1,949 @@
+diff -Naur qt-2.3.8/src/kernel/qapplication.h qt-2.3.8-orig/src/kernel/qapplication.h
+--- qt-2.3.8/src/kernel/qapplication.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qapplication.h	2007-07-29 21:50:08.000000000 -0300
+@@ -329,9 +329,16 @@
+     QApplication( const QApplication & );
+     QApplication &operator=( const QApplication & );
+ #endif
++
++#if defined(QT_EZX_MUNGE)
++public:
++    void reportWindow(int);            // follows QWidget::report
++#endif /* defined(QT_EZX_MUNGE) */
+ };
+ 
+ 
++
++
+ inline int QApplication::argc() const
+ {
+     return app_argc;
+diff -Naur qt-2.3.8/src/kernel/qfont.h qt-2.3.8-orig/src/kernel/qfont.h
+--- qt-2.3.8/src/kernel/qfont.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qfont.h	2007-11-20 14:21:29.000000000 -0200
+@@ -50,7 +50,7 @@
+ class QFontInternal;
+ class QRenderedFont;
+ 
+-class Q_EXPORT QFont					// font class
++class Q_EXPORT QFont					// font class  //fox size: 8
+ {
+ public:
+     enum CharSet   { ISO_8859_1,  Latin1 = ISO_8859_1, AnyCharSet,
+@@ -116,7 +116,10 @@
+ 		     Bold  = 75, Black	= 87 };
+     QFont();					// default font
+     QFont( const QString &family, int pointSize = 12,
+-	   int weight = Normal, bool italic = FALSE );
++        int weight = Normal, bool italic = FALSE, bool b = FALSE ); //fox add: bool b = FALSE
++
++
++
+     QFont( const QString &family, int pointSize,
+ 	   int weight, bool italic, CharSet charSet );
+     QFont( const QFont & );
+@@ -231,8 +234,10 @@
+     friend Q_EXPORT QDataStream &operator<<( QDataStream &, const QFont & );
+     friend Q_EXPORT QDataStream &operator>>( QDataStream &, QFont & );
+ #endif
+-    QFontData	 *d;				// internal font data
++    QFontData	 *d;				// internal font data
++    int Temp4;      //fox Add
+     static CharSet defaultCharSet;
++
+ };
+ 
+ inline bool QFont::bold() const
+diff -Naur qt-2.3.8/src/kernel/qgfxlinuxfb_qws.h qt-2.3.8-orig/src/kernel/qgfxlinuxfb_qws.h
+--- qt-2.3.8/src/kernel/qgfxlinuxfb_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qgfxlinuxfb_qws.h	2007-11-20 14:24:57.000000000 -0200
+@@ -46,6 +46,11 @@
+     virtual bool connect( const QString &displaySpec );
+ 
+     virtual bool useOffscreen() { return false; }
++#if defined(QT_EZX_MUNGE)
++    /* Virtual methods added in QLinuxFbScreen -- ORDER IS IMPORTANT */
++    virtual int virtualHeight(void) { return m_i_474; }
++#endif /* defined(QT_EZX_MUNGE) */
++
+ 
+     virtual void disconnect();
+     virtual void shutdownDevice();
+@@ -78,6 +83,10 @@
+     int startuph;
+     int startupd;
+     fb_cmap *startcmap;
++#if defined(QT_EZX_MUNGE)
++    unsigned int m_i_474;      // Assigned to fb_var_screeninfo.yres_virtual
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ #endif
+diff -Naur qt-2.3.8/src/kernel/qgfx_qws.h qt-2.3.8-orig/src/kernel/qgfx_qws.h
+--- qt-2.3.8/src/kernel/qgfx_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qgfx_qws.h	2007-11-20 14:30:30.000000000 -0200
+@@ -273,6 +273,21 @@
+ 
+     friend class QWSServer;
+     static ClearCacheFunc clearCacheFunc;
++#if defined(QT_EZX_MUNGE)
++public:
++    /*
++     * Inserted new virtual methods - ORDER IS IMPORTANT
++     * These are all weak symbols, and amount to 1-2 instruction methods.
++     */
++    virtual bool canFlip() const { return false; }
++    virtual int enableFlipping(QWidget*) { return 0; }
++    virtual bool flippingEnabled(void) const { return false; }
++    virtual void disableFlipping(void) {}
++    virtual int back(void) { return 0; }
++    virtual int flip(void) { return 0; }
++    virtual int redirectQtToBack(bool) { return 0; }
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ extern QScreen * qt_screen;
+@@ -320,6 +335,11 @@
+     // Fill operations - these use the current source (pixmap,
+     // color, etc), and draws outline
+     virtual void fillRect( int,int,int,int )=0;
++#if defined(QT_EZX_MUNGE)
++    /* New virtual methods -- ORDER IS IMPORTANT */
++    virtual void eraseRect(int, int, int, int, int, QPixmap const*)=0;
++#endif /* defined(QT_EZX_MUNGE) */
++
+     virtual void drawPolygon( const QPointArray &,bool,int,int )=0;
+ 
+     virtual void setLineStep(int)=0;
+diff -Naur qt-2.3.8/src/kernel/qgfxraster_qws.h qt-2.3.8-orig/src/kernel/qgfxraster_qws.h
+--- qt-2.3.8/src/kernel/qgfxraster_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qgfxraster_qws.h	2007-11-20 14:32:05.000000000 -0200
+@@ -307,6 +307,11 @@
+     virtual void drawPoints( const QPointArray &,int,int );
+     virtual void drawLine( int,int,int,int );
+     virtual void fillRect( int,int,int,int );
++#if defined(QT_EZX_MUNGE)
++    /* Reimplemented from QGfx */
++    virtual void eraseRect(int, int, int, int, int, QPixmap const*);
++#endif /* defined(QT_EZX_MUNGE) */
++
+     virtual void drawPolyline( const QPointArray &,int,int );
+     virtual void drawPolygon( const QPointArray &,bool,int,int );
+     virtual void blt( int,int,int,int,int,int );
+diff -Naur qt-2.3.8/src/kernel/qimage.h qt-2.3.8-orig/src/kernel/qimage.h
+--- qt-2.3.8/src/kernel/qimage.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qimage.h	2007-11-19 23:17:21.000000000 -0200
+@@ -196,6 +196,12 @@
+     void	reinit();
+     void	freeBits();
+     static void	warningIndexRange( const char *, int );
++#if defined(QT_EZX_MUNGE)
++public:
++    QString     m_string_0;
++private:
++#endif
++
+ 
+     struct QImageData : public QShared {	// internal image data
+ 	int	w;				// image width
+diff -Naur qt-2.3.8/src/kernel/qkeyboard_qws.h qt-2.3.8-orig/src/kernel/qkeyboard_qws.h
+--- qt-2.3.8/src/kernel/qkeyboard_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qkeyboard_qws.h	2007-07-29 16:19:39.000000000 -0300
+@@ -50,7 +50,10 @@
+ };
+ #endif
+ 
++#if !defined(QT_EZX_INPUT)
+ Q_EXPORT bool qwsSetKeyboardAutoRepeat( int delay, int period );
+ Q_EXPORT bool qwsGetKeyboardAutoRepeat( int *delay, int *period );
++#endif /* !defined(QT_EZX_INPUT) */
++
+ 
+ #endif
+diff -Naur qt-2.3.8/src/kernel/qmemorymanager_qws.h qt-2.3.8-orig/src/kernel/qmemorymanager_qws.h
+--- qt-2.3.8/src/kernel/qmemorymanager_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qmemorymanager_qws.h	2007-07-29 16:35:38.000000000 -0300
+@@ -248,6 +248,12 @@
+     QMap<PixmapID,uchar*> pixmap_map;
+     int next_pixmap_id;
+     QMap<QString,FontID> font_map;
++
++#if defined(QT_EZX_MUNGE)
++public:
++    void setRawData(int, unsigned char*, int, int, bool);
++#endif
++
+ };
+ 
+ extern QMemoryManager* memorymanager;
+diff -Naur qt-2.3.8/src/kernel/qnamespace.h qt-2.3.8-orig/src/kernel/qnamespace.h
+--- qt-2.3.8/src/kernel/qnamespace.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qnamespace.h	2007-07-29 22:36:05.000000000 -0300
+@@ -224,7 +224,8 @@
+ 	WindowsStyle,
+ 	Win3Style, // OBSOLETE
+ 	PMStyle, // OBSOLETE
+-	MotifStyle
++	MotifStyle,
++	EZXStyle
+     };
+ 
+     enum Modifier {		// accelerator modifiers
+diff -Naur qt-2.3.8/src/kernel/qpainter.h qt-2.3.8-orig/src/kernel/qpainter.h
+--- qt-2.3.8/src/kernel/qpainter.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qpainter.h	2007-11-20 15:00:50.000000000 -0200
+@@ -308,6 +308,12 @@
+ #ifndef QT_NO_TRANSFORMATIONS
+     QCOORD	wx, wy, ww, wh;
+     QCOORD	vx, vy, vw, vh;
++
++#if defined(QT_EZX_MUNGE)
++    /* Alignment problem? */
++    int                m_int_5c;
++#endif
++
+     QWMatrix	wxmat;
+ 
+     // Cached composition (and inverse) of transformations
+@@ -373,6 +379,13 @@
+     QPainter( const QPainter & );
+     QPainter &operator=( const QPainter & );
+ #endif
++
++#if defined(QT_EZX_MUNGE)
++public:
++    int                m_int_10c;
++    void eraseRect(int, int, int, int, QBrush const&);
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ 
+diff -Naur qt-2.3.8/src/kernel/qpixmap.h qt-2.3.8-orig/src/kernel/qpixmap.h
+--- qt-2.3.8/src/kernel/qpixmap.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qpixmap.h	2007-11-20 15:03:55.000000000 -0200
+@@ -53,7 +53,7 @@
+ #endif
+ 
+ 
+-class Q_EXPORT QPixmap : public QPaintDevice, public Qt
++class Q_EXPORT QPixmap : public QPaintDevice, public Qt  //fox size: $14, QPaintDevice: $C
+ {
+ public:
+     enum ColorMode { Auto, Color, Mono };
+@@ -179,10 +179,10 @@
+     };
+ #endif
+ 
+-    struct QPixmapData : public QShared {	// internal pixmap data
+-	QCOORD	w, h;
+-	short	d;
+-	uint	uninit	 : 1;
++    struct QPixmapData : public QShared {	// internal pixmap data        
++	QCOORD	w, h;                                                          
++	short	d;                                                             
++	uint	uninit	 : 1;                                                  
+ 	uint	bitmap	 : 1;
+ 	uint	selfmask : 1;
+ #if defined(_WS_WIN_)
+@@ -210,7 +210,8 @@
+         void copyData(int id, int width, int depth) const;
+ #endif
+ 	Optimization optim;
+-    } *data;
++    } *data;                       //fox f: $C
++    QString Temp4;      //fox f: $10 Add
+ 
+ private:
+     QPixmap( int w, int h, int depth, bool, Optimization );
+@@ -227,6 +228,12 @@
+     friend class QBitmap;
+     friend class QPaintDevice;
+     friend class QPainter;
++#if defined(QT_EZX_MUNGE)
++public:
++    void setRawData(unsigned char*, int, int, int, int);
++    QString    m_string_10;
++#endif /* defined(QT_EZX_MUNGE) */
++
+     friend class QSharedMemoryManager;
+ };
+ 
+diff -Naur qt-2.3.8/src/kernel/qstyle.h qt-2.3.8-orig/src/kernel/qstyle.h
+--- qt-2.3.8/src/kernel/qstyle.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qstyle.h	2007-07-29 20:11:21.000000000 -0300
+@@ -91,6 +91,18 @@
+ 		    const QPixmap *pixmap,
+ 		    const QString& text, int len=-1 ); // ### const 3.0
+ 
++#if defined(QT_EZX_MUNGE)
++    /* New (inserted) virtual methods - ORDER IS IMPORTANT */
++    virtual void drawProgressBackground(QPainter*, QRect, QColorGroup&);
++    virtual void drawProgressAmount(QPainter*, QRect, QRect,
++                                   int, int, int, int, QColorGroup&);
++    virtual void drawDialogBackground(QPainter*, int, int, int, int, QBrush&);
++    virtual void drawLineEditBackground(QPainter*, int, int, int, int,
++                                       QBrush&);
++#endif /* defined(QT_EZX_MUNGE) */
++
++
++
+     virtual void drawItem( QPainter *p, int x, int y, int w, int h,
+ 		    int flags, const QColorGroup &g, bool enabled,
+ 		    const QPixmap *pixmap, const QString& text,
+diff -Naur qt-2.3.8/src/kernel/qt.h qt-2.3.8-orig/src/kernel/qt.h
+--- qt-2.3.8/src/kernel/qt.h	2004-08-05 02:56:07.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qt.h	2007-11-17 17:04:00.000000000 -0200
+@@ -98,6 +98,7 @@
+ #include "qevent.h"
+ #include <qgif.h>
+ #include "qobject.h"
++#include "qptf.h"  //fox add
+ #include "qiconset.h"
+ #include <qimage.h>
+ #include <qkeycode.h>
+diff -Naur qt-2.3.8/src/kernel/qthread.h qt-2.3.8-orig/src/kernel/qthread.h
+--- qt-2.3.8/src/kernel/qthread.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qthread.h	2007-07-29 19:40:59.000000000 -0300
+@@ -109,6 +109,13 @@
+     QThread( const QThread & );
+     QThread &operator=( const QThread & );
+ #endif
++
++#if defined(QT_EZX_MUNGE)
++public:
++    /* Appears to return a pointer of some sort */
++    void *ClearObjectThreadEvent(QObject*);
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ class QWaitConditionPrivate;
+diff -Naur qt-2.3.8/src/kernel/qwidget.h qt-2.3.8-orig/src/kernel/qwidget.h
+--- qt-2.3.8/src/kernel/qwidget.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qwidget.h	2007-11-17 17:04:34.000000000 -0200
+@@ -48,7 +48,8 @@
+ #include "qfontmetrics.h"
+ #include "qfontinfo.h"
+ #include "qstyle.h"
+-#include "qsizepolicy.h"
++#include "qsizepolicy.h"
++#include "qptf.h"
+ #endif // QT_H
+ 
+ class QLayout;
+@@ -58,7 +59,7 @@
+ class QStyle;
+ class QWSRegionManager;
+ 
+-class Q_EXPORT QWidget : public QObject, public QPaintDevice
++class Q_EXPORT QWidget : public QObject, public QPaintDevice, public QPTF   //fox Size: $C4(QPTF²»Ëã98)
+ {
+     Q_OBJECT
+     Q_ENUMS( BackgroundMode PropagationMode FocusPolicy BackgroundOrigin )
+@@ -552,11 +553,11 @@
+     void         setBackgroundX11Relative();
+     void	 checkChildrenDnd();
+ #endif
+-
+-    WId		 winid;
+-    uint	 widget_state;
+-    uint	 widget_flags;
+-    uint	 propagate_font : 2; // obsolete
++    bool     Temp50;                  //fox f: $.. $50?  bool ÕâÀïÈ±Ò»žö,»òÕßÊÇQPTFÈ±Ò»žö
++    WId		 winid;                   //fox f: $30 $54
++    uint	 widget_state;            //fox f: $34 $58
++    uint	 widget_flags;            //fox f: $38 $5C
++    uint	 propagate_font : 2; // obsolete  //fox f: $3C $60
+     uint	 propagate_palette : 2; // obsolete
+     uint	 focus_policy : 4;
+     uint 	 own_font :1;
+@@ -565,28 +566,28 @@
+     uint 	 is_closing :1;
+     uint 	 in_show : 1;
+     uint 	 in_show_maximized : 1;
+-    QPoint	 fpos;
+-    QRect	 crect;
+-    QColor	 bg_col;
++    QPoint	 fpos;                    //fox f: $40 $64 size = 8
++    QRect	 crect;                   //fox f: $44 $6C size = $10
++    QColor	 bg_col;                  //fox f: $48 $7C size = 8
+ #ifndef QT_NO_PALETTE
+-    QPalette	 pal;
++    QPalette	 pal;                 //fox f: $4C $84
+ #endif
+-    QFont	 fnt;
++    QFont	 fnt;                     //fox f: $50 $88 
+ #ifndef QT_NO_LAYOUT
+-    QLayout 	*lay_out;
++    QLayout 	*lay_out;             //fox f: $54 $90
+ #endif
+-    QWExtra	*extra;
++    QWExtra	*extra;                   //fox f: $58 $94
+ #if defined(_WS_QWS_)
+-    QRegion	 req_region;			// Requested region
+-    mutable QRegion	 paintable_region;	// Paintable region
+-    mutable bool         paintable_region_dirty;// needs to be recalculated
+-    mutable QRegion      alloc_region;          // Allocated region
+-    mutable bool         alloc_region_dirty;    // needs to be recalculated
+-    mutable int          overlapping_children;  // Handle overlapping children
+-
+-    int		 alloc_region_index;
+-    int		 alloc_region_revision;
+-
++    QRegion	 req_region;			// Requested region  //fox f: $70 $98
++    mutable QRegion	 paintable_region;	// Paintable region  //fox f: $74  $9C
++    mutable bool         paintable_region_dirty;// needs to be recalculated //fox f: $78  $A0 
++    mutable QRegion      alloc_region;          // Allocated region         //fox f: $7C  $A4
++    mutable bool         alloc_region_dirty;    // needs to be recalculated //fox f: $80  $A8 
++    mutable int          overlapping_children;  // Handle overlapping children //fox f: $84 $AC
++
++    int		 alloc_region_index;                                               //fox f: $88 $B0
++    int		 alloc_region_revision;                                            //fox f: $8C $B4
++    int TempB8;                                                                //fox f: $.. $B8 ÕâÀïÈ±Ò»žö
+     void updateOverlappingChildren() const;
+     void setChildrenAllocatedDirty();
+     void setChildrenAllocatedDirty( const QRegion &r, const QWidget *dirty=0 );
+@@ -602,8 +603,8 @@
+ #endif
+ 
+     // used to accumulate dirty region when children moved/resized.
+-    QRegion dirtyChildren;
+-    bool isSettingGeometry;
++    QRegion dirtyChildren;    //fox f: $90 $BC
++    bool isSettingGeometry;   //fox f: $94 $C0
+     friend class QWSManager;
+ #endif
+ 
+diff -Naur qt-2.3.8/src/kernel/qwindowsystem_qws.h qt-2.3.8-orig/src/kernel/qwindowsystem_qws.h
+--- qt-2.3.8/src/kernel/qwindowsystem_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qwindowsystem_qws.h	2007-07-29 23:34:47.000000000 -0300
+@@ -214,7 +214,10 @@
+ 
+     static const KeyMap *keyMap();
+ 
++#if !defined(QT_EZX_INPUT)
+     static void setOverrideKeys( QIntDict<QWSServer::KeyMap> *map );
++#endif
++
+ 
+     class KeyboardFilter
+     {
+@@ -375,7 +378,8 @@
+ #endif
+ 
+     QWSMouseHandler* newMouseHandler(const QString& spec);
+-#ifndef QT_NO_QWS_KEYBOARD    
++
++#if !defined(QT_NO_QWS_KEYBOARD) && !defined(QT_EZX_INPUT)
+     QWSKeyboardHandler* newKeyboardHandler(const QString& spec);
+ #endif
+     void openDisplay();
+@@ -480,6 +484,24 @@
+     int microX;
+     int microY;
+ #endif
++
++#if defined(QT_EZX_MUNGE)
++    /* Routines added by Motorola for EZX */
++signals:
++    void NotifyClientClosed(QWSClient*);
++    void cursorSelected(QWSCursor*);
++
++public:
++    void insertPrioritizedWindow(QWSWindow*);
++    void invokeRegionPriority(QWSSetRegionPriorityCommand const*, QWSClient*);
++    void invokeSimulateMouseEvent(QWSSimulateMouseEventCommand const*,
++                                 QWSClient*);
++    void lowerWindow(QWSWindow*, QWSWindow*);
++    void sendCaptureEvent(void);
++    void set_region_priority(QWSSetRegionPriorityCommand const*);
++    void simulate_mouse_event(QWSSimulateMouseEventCommand const*);
++#endif
++
+ };
+ 
+ extern QWSServer *qwsServer; //there can be only one
+@@ -564,6 +586,18 @@
+     uint isClosed : 1;
+     QString id;
+     int cid;
++
++#if defined(QT_EZX_MUNGE)
++    void sendSimulateMouseEvent(QPoint const&, int);
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
++#if defined(QT_EZX_MUNGE)
++extern QString qwsGetClipboardObjectFormat(void);
++extern void qwsSetClipboardObjectFormat(QString const&);
++extern void qwsSetClipboardObject(QString const&);
++#endif /* defined(QT_EZX_MUNGE) */
++
++
+ #endif
+diff -Naur qt-2.3.8/src/kernel/qwscommand_qws.h qt-2.3.8-orig/src/kernel/qwscommand_qws.h
+--- qt-2.3.8/src/kernel/qwscommand_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qwscommand_qws.h	2007-07-29 19:56:19.000000000 -0300
+@@ -120,7 +120,12 @@
+ 	SetIMFont,
+ 	ResetIM,
+ 	SetIMInfo,
+-	IMMouse
++       IMMouse,
++#if defined(QT_EZX_MUNGE)
++       EZX_SetRegionPriority = 28,
++       EZX_SimulateMouseEvent = 29,
++#endif /* defined(QT_EZX_MUNGE) */
++
+     };
+     static QWSCommand *factory( int type );
+ };
+@@ -576,4 +581,30 @@
+ 
+ #endif
+ 
++#if defined(QT_EZX_MUNGE)
++class QWSSetRegionPriorityCommand : public QWSCommand {
++public:
++    QWSSetRegionPriorityCommand() :
++       QWSCommand( QWSCommand::EZX_SetRegionPriority,
++                   sizeof( simpleData ), (char *)&simpleData ) {}
++    virtual ~QWSSetRegionPriorityCommand() {};
++    struct SimpleData {
++       int windowid;
++       int unk_val;
++    } simpleData;
++};
++class QWSSimulateMouseEventCommand : public QWSCommand {
++public:
++    QWSSimulateMouseEventCommand() :
++       QWSCommand( QWSCommand::EZX_SimulateMouseEvent,
++                   sizeof( simpleData ), (char *)&simpleData ) {}
++    virtual ~QWSSimulateMouseEventCommand() {};
++    struct SimpleData {
++       int windowid;
++       int unk_val;
++    } simpleData;
++};
++#endif /* defined(QT_EZX_MUNGE) */
++
++
+ #endif // QWSCOMMAND_H
+diff -Naur qt-2.3.8/src/kernel/qwsdisplay_qws.h qt-2.3.8-orig/src/kernel/qwsdisplay_qws.h
+--- qt-2.3.8/src/kernel/qwsdisplay_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qwsdisplay_qws.h	2007-07-29 19:57:47.000000000 -0300
+@@ -140,6 +140,12 @@
+     int getPropertyLen;
+     char *getPropertyData;
+     static QLock *lock;
++#if defined(QT_EZX_MUNGE)
++    /* Methods added by Motorola for EZX */
++    void setRegionPriority(int, int);
++    void simulateMouseEvent(int, int, int);
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ extern Q_EXPORT QWSDisplay *qt_fbdpy;
+diff -Naur qt-2.3.8/src/kernel/qwsevent_qws.h qt-2.3.8-orig/src/kernel/qwsevent_qws.h
+--- qt-2.3.8/src/kernel/qwsevent_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qwsevent_qws.h	2007-07-29 19:59:05.000000000 -0300
+@@ -59,7 +59,16 @@
+ 	QCopMessage,
+ 	WindowOperation,
+ 	IMEvent,
+-	NEvent
++       NEvent,
++#if defined(QT_EZX_MUNGE)
++       /*
++        * Yes, these values seemingly start after NEvent.
++        * This interpretation might be completely wrong.
++        */
++       EZX_CaptureEvent = 17,
++       EZX_StrEvent = 18,
++#endif /* defined(QT_EZX_MUNGE) */
++
+     };
+ 
+     QWSMouseEvent *asMouse()
+@@ -299,4 +308,32 @@
+     QChar *text;
+ };
+ #endif
++
++#if defined(QT_EZX_MUNGE)
++class QWSCaptureEvent : public QWSEvent {
++public:
++    QWSCaptureEvent()
++       : QWSEvent( EZX_CaptureEvent, sizeof( simpleData ),
++                   (char*)&simpleData ) { }
++    struct SimpleData {
++       int window;
++    } simpleData;
++};
++class QWSStrEvent : public QWSEvent {
++public:
++    QWSStrEvent()
++       : QWSEvent( EZX_StrEvent, sizeof( simpleData ),
++                   (char*)&simpleData ) { }
++    struct SimpleData {
++       int window;
++       int unk_val1;
++    } simpleData;
++    char *m_unk_24;
++    void setData( char *d, int len, bool allocateMem = TRUE ) {
++       QWSEvent::setData( d, len, allocateMem );
++       m_unk_24 = rawDataPtr;
++    }
++};
++#endif /* defined(QT_EZX_MUNGE) */
++
+ #endif
+diff -Naur qt-2.3.8/src/kernel/qwsmouse_qws.h qt-2.3.8-orig/src/kernel/qwsmouse_qws.h
+--- qt-2.3.8/src/kernel/qwsmouse_qws.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/kernel/qwsmouse_qws.h	2007-07-29 20:00:29.000000000 -0300
+@@ -61,6 +61,7 @@
+     void mouseChanged(const QPoint& pos, int bstate);
+ };
+ 
++#if !defined(QT_EZX_INPUT)
+ class QCalibratedMouseHandler : public QWSMouseHandler
+ {
+     Q_OBJECT
+@@ -86,6 +87,7 @@
+     unsigned int currSample;
+     unsigned int numSamples;
+ };
++#endif /* !defined(QT_EZX_INPUT) */
+ 
+ #endif
+ 
+diff -Naur qt-2.3.8/src/tools/qfileinfo.h qt-2.3.8-orig/src/tools/qfileinfo.h
+--- qt-2.3.8/src/tools/qfileinfo.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/tools/qfileinfo.h	2007-07-29 16:00:47.000000000 -0300
+@@ -126,6 +126,11 @@
+     QString	fn;
+     QFileInfoCache *fic;
+     bool	cache;
++#if defined(QT_EZX_MUNGE)
++public:
++    QDateTime  firstCreate()   const;
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ 
+diff -Naur qt-2.3.8/src/tools/qglobal.h qt-2.3.8-orig/src/tools/qglobal.h
+--- qt-2.3.8/src/tools/qglobal.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/tools/qglobal.h	2007-07-29 16:11:25.000000000 -0300
+@@ -470,7 +470,9 @@
+ #define QT_NO_QWS_DEPTH_8GRAYSCALE
+ #define QT_NO_QWS_KDE2_WM_STYLE
+ #ifdef _WS_QWS_
++#if !defined(QT_EZX_MUNGE)
+ # define QT_NO_MIMECLIPBOARD
++#endif /* !defined(QT_EZX_MUNGE) */
+ #endif
+ 
+ #ifndef QT_H
+diff -Naur qt-2.3.8/src/tools/qstring.h qt-2.3.8-orig/src/tools/qstring.h
+--- qt-2.3.8/src/tools/qstring.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/tools/qstring.h	2007-07-29 16:46:30.000000000 -0300
+@@ -199,6 +199,10 @@
+ #endif
+     enum { net_ordered = 0 };
+ #endif
++#if defined(QT_EZX_MUNGE)
++    bool isThaiCombining() const;
++#endif /* defined(QT_EZX_MUNGE) */
++
+ } Q_PACKED;
+ 
+ inline QChar::QChar()
+diff -Naur qt-2.3.8/src/widgets/qcommonstyle.h qt-2.3.8-orig/src/widgets/qcommonstyle.h
+--- qt-2.3.8/src/widgets/qcommonstyle.h	2004-08-05 02:56:09.000000000 -0300
++++ qt-2.3.8-orig/src/widgets/qcommonstyle.h	2007-07-29 22:34:32.000000000 -0300
+@@ -42,7 +42,7 @@
+ #include "qstyle.h"
+ #endif // QT_H
+ 
+-#if !defined(QT_NO_STYLE_WINDOWS) || !defined(QT_NO_STYLE_MOTIF)
++#if !defined(QT_NO_STYLE_WINDOWS) || !defined(QT_NO_STYLE_MOTIF) || !defined(QT_NO_STYLE_EZX)
+ 
+ class Q_EXPORT QCommonStyle: public QStyle
+ {
+@@ -51,6 +51,7 @@
+     QCommonStyle(GUIStyle);
+     ~QCommonStyle();
+ 
++    friend class EZXStyle;
+     friend class QMotifStyle;
+     friend class QWindowsStyle;
+     friend class QPlatinumStyle;
+diff -Naur qt-2.3.8/src/widgets/qlineedit.h qt-2.3.8-orig/src/widgets/qlineedit.h
+--- qt-2.3.8/src/widgets/qlineedit.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/widgets/qlineedit.h	2007-11-20 14:39:34.000000000 -0200
+@@ -222,6 +222,15 @@
+     QLineEdit( const QLineEdit & );
+     QLineEdit &operator=( const QLineEdit & );
+ #endif
++
++#if defined(QT_EZX_MUNGE)
++public:
++    int clusterBackward(int) const;
++    int clusterForward(int) const;
++    bool       m_offset_cursor_dd;
++    void setOffsetCursor(bool);
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ #endif // QT_NO_LINEEDIT
+diff -Naur qt-2.3.8/src/widgets/qlistview.h qt-2.3.8-orig/src/widgets/qlistview.h
+--- qt-2.3.8/src/widgets/qlistview.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/widgets/qlistview.h	2007-11-20 14:46:31.000000000 -0200
+@@ -178,6 +178,7 @@
+     void * columns;
+ 
+     friend class QListView;
++
+ };
+ 
+ class QCheckListItem;
+diff -Naur qt-2.3.8/src/widgets/qmultilineedit.h qt-2.3.8-orig/src/widgets/qmultilineedit.h
+--- qt-2.3.8/src/widgets/qmultilineedit.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/widgets/qmultilineedit.h	2007-07-29 16:30:59.000000000 -0300
+@@ -260,7 +260,9 @@
+     QCString pickSpecial(QMimeSource* ms, bool always_ask, const QPoint&);
+ #endif
+ #ifndef QT_NO_MIMECLIPBOARD
++#if !defined(QT_EZX_MUNGE)
+     void       pasteSpecial(const QPoint&);
++#endif /* !defined(QT_EZX_MUNGE) */
+ #endif
+     struct QMultiLineEditRow {
+ 	QMultiLineEditRow( QString string, int width, bool nl = TRUE )
+@@ -357,6 +359,14 @@
+     QMultiLineEdit( const QMultiLineEdit & );
+     QMultiLineEdit &operator=( const QMultiLineEdit & );
+ #endif
++
++#if defined(QT_EZX_MUNGE)
++public:
++    int clusterBackward(int) const;
++    int clusterForward(int) const;
++    int toClusterEnd(int) const;
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ inline bool QMultiLineEdit::isReadOnly() const { return readOnly; }
+diff -Naur qt-2.3.8/src/widgets/qpopupmenu.h qt-2.3.8-orig/src/widgets/qpopupmenu.h
+--- qt-2.3.8/src/widgets/qpopupmenu.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/widgets/qpopupmenu.h	2007-11-17 17:08:06.000000000 -0200
+@@ -171,6 +171,16 @@
+     QPopupMenu( const QPopupMenu & );
+     QPopupMenu &operator=( const QPopupMenu & );
+ #endif
++
++#if defined(QT_EZX_MUNGE)
++public:
++    /* Reimplemented from QWidget */
++//    virtual QRect globalRect(void);
++//    virtual bool sendPackage(void);
++
++    void sendItemPackage(QMenuItem*, int, int, int, int);
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ 
+diff -Naur qt-2.3.8/src/widgets/qscrollbar.h qt-2.3.8-orig/src/widgets/qscrollbar.h
+--- qt-2.3.8/src/widgets/qscrollbar.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/widgets/qscrollbar.h	2007-11-17 17:08:19.000000000 -0200
+@@ -160,6 +160,13 @@
+     QScrollBar( const QScrollBar & );
+     QScrollBar &operator=( const QScrollBar & );
+ #endif
++
++#if defined(QT_EZX_MUNGE)
++public:
++    /* Reimplemented from QWidget */
++//    virtual bool sendPackage(void);
++#endif /* defined(QT_EZX_MUNGE) */
++
+ };
+ 
+ 
+diff -Naur qt-2.3.8/src/widgets/qtableview.h qt-2.3.8-orig/src/widgets/qtableview.h
+--- qt-2.3.8/src/widgets/qtableview.h	2004-08-05 02:56:10.000000000 -0300
++++ qt-2.3.8-orig/src/widgets/qtableview.h	2007-11-17 17:03:55.000000000 -0200
+@@ -48,7 +48,7 @@
+ class QCornerSquare;
+ 
+ 
+-class Q_EXPORT QTableView : public QFrame
++class Q_EXPORT QTableView : public QFrame //fox size: $128, QFrame: $E4
+ {
+     Q_OBJECT
+ public:
+@@ -60,12 +60,16 @@
+     void	repaint( int x, int y, int w, int h, bool erase=TRUE );
+     void	repaint( const QRect &, bool erase=TRUE );
+ 
++    QTableView( QWidget *parent=0, const char *name=0, WFlags f=0 );    //fox remove from protected
++    ~QTableView();                                                      //fox remove from protected
+ protected:
+-    QTableView( QWidget *parent=0, const char *name=0, WFlags f=0 );
+-   ~QTableView();
++   // QTableView( QWidget *parent=0, const char *name=0, WFlags f=0 );  //fox remove to public
++   //~QTableView();                                                     //fox remove to public
+ 
+     int		numRows()	const;
+-    virtual void setNumRows( int );
++    //virtual void setNumRows( int ); 
++    virtual void setNumRows( int, bool); //fox modified.
++
+     int		numCols()	const;
+     virtual void setNumCols( int );
+ 
+@@ -122,8 +126,11 @@
+     void	verSbSlidingDone();
+ 
+ protected:
+-    virtual void paintCell( QPainter *, int row, int col ) = 0;
+-    virtual void setupPainter( QPainter * );
++    //virtual void paintCell( QPainter *, int row, int col ) = 0;
++    virtual void paintCell( QPainter *, int row, int col ); //fox modified
++    virtual void paintCell( QPainter *, int row, int col, int, int ); //fox add
++    virtual void setupPainter( QPainter * );
++    virtual void drawTableFrame(QPainter*, QRect&); //fox add
+ 
+     void	paintEvent( QPaintEvent * );
+     void	resizeEvent( QResizeEvent * );
+@@ -168,14 +175,14 @@
+     void	doAutoScrollBars();
+     void	showOrHideScrollBars();
+ 
+-    int		nRows;
+-    int		nCols;
+-    int		xOffs, yOffs;
+-    int		xCellOffs, yCellOffs;
+-    short	xCellDelta, yCellDelta;
+-    short	cellH, cellW;
++    int		nRows;                      //fox: f: $E4
++    int		nCols;                      //fox: f: $E8
++    int		xOffs, yOffs;               //fox: f: $EC, $F0
++    int		xCellOffs, yCellOffs;       //fox: f: $F4, $F8
++    short	xCellDelta, yCellDelta;     //fox: f: $FC, $FE
++    short	cellH, cellW;               //fox: f: $100, $102
+ 
+-    uint	eraseInPaint		: 1;
++    uint	eraseInPaint		: 1;    //fox: f: $104
+     uint	verSliding		: 1;
+     uint	verSnappingOff		: 1;
+     uint	horSliding		: 1;
+@@ -184,12 +191,12 @@
+     uint	sbDirty			: 8;
+     uint	inSbUpdate		: 1;
+ 
+-    uint	tFlags;
+-    QRect	cellUpdateR;
+-
+-    QScrollBar *vScrollBar;
+-    QScrollBar *hScrollBar;
+-    QCornerSquare *cornerSquare;
++    uint	tFlags;                     //fox: f: $108
++    QRect	cellUpdateR;                //fox: f: $10C
++                                                      
++    QScrollBar *vScrollBar;             //fox: f: $11C
++    QScrollBar *hScrollBar;             //fox: f: $120
++    QCornerSquare *cornerSquare;        //fox: f: $124
+ 
+ private:	// Disabled copy constructor and operator=
+ #if defined(Q_DISABLE_COPY)
+--- qt-2.3.8/include/qptf.h	1969-12-31 21:00:00.000000000 -0300
++++ qt-2.3.8-orig/include/qptf.h	2007-11-17 17:06:24.000000000 -0200
+@@ -0,0 +1,77 @@
++//////////////////////////////////////////////////////////////////////////
++//
++//  fox Add
++//
++//////////////////////////////////////////////////////////////////////////
++
++#ifndef _QPTF_H_
++#define _QPTF_H_
++
++#ifndef QT_H
++#include "qstring.h"
++#include "qrect.h"
++#include "qpixmap.h"
++#endif // QT_H
+
++
++class Q_EXPORT QPTF
++{
++    
++public:
++    QPTF(void);
++    virtual ~QPTF();
++    virtual int getPacketId();
++    virtual int ptf_getState();
++    virtual int globalRect();
++    virtual int sendPackage();
++    virtual int sendPackage(int, QRect, int, int, QString, QString);
++    virtual int getPackageType();
++    virtual int getPtfText();
++    virtual int setPtfText(const QString&);
++    virtual int getPtfPixmap();
++    virtual int getPtfIconId();
++    virtual int setPtfIconId(const QString&);
++
++    int fillInIcon(unsigned char*, QString);
++    int fillInRect(unsigned char*, QRect);
++    int fillInRect(unsigned char*, int, int, int, int);
++    int fillInText(unsigned char*, QString);
++    int fillInType(unsigned char*);
++    int fillInType(unsigned char*, int);
++    int decrePackNo(void);
++    int fillInState(unsigned char*);
++    int fillInState(unsigned char*, int);
++    int getWritePipe(void);
++    int isFlexBitSet(void);
++    int setPtfPixmap(const QPixmap&);
++    int setPtfPixmap(const QString&);
++    int setPtfOverlay(const QString&);
++    int closeWritePipe(void);
++    int fillInHeadTime(unsigned char*, int);
++    int setPackageType(int);
++    int createWritePipe(void);
++    int sendPackage_Base(void);
++    int fillInPayloadSend(unsigned char*, int);
++    int getTotalRectangle(void);
++    int sendPackage_Button(void);
++    int sendPackage_Slider(void);
++    int sendPackage_CheckBox(void);
++    int sendPackage_RadioButton(void);
++    int report(void);
++    int sendEnd(void);
++    int setPackNo(unsigned char);
++private:
++    int PackageType;    //fox f: 4 = 0
++    QString FValue8;    //fox f: 8
++    QString FValueC;    //fox f: $C
++    int temp10;         //fox f: $10 = 0
++    int temp14;         //fox f: $14 = 0
++    int temp18;         //fox f: $18 = -1
++    int temp1C;         //fox f: $1C = 0
++
++    static int _bflex;    //.bss:417708B8 _ZN4QPTF6_bflexE % 4                    ; DATA XREF: .got:4176AB98.o
++    static int _shmbuff;  //.bss:417708C0 _ZN4QPTF8_shmbuffE % 4                  ; DATA XREF: .got:4176BEA4.o
++    static const int ptf_pipe = -1;  //.data:4175D5F0 _ZN4QPTF8ptf_pipeE DCD 0xFFFFFFFF       ; DATA XREF: .got:4176B8FC.o
++    static int _flex_set; //.bss:417708BC _ZN4QPTF9_flex_setE % 4                 ; DATA XREF: .got:4176AEBC.o
++};
++
++#endif
