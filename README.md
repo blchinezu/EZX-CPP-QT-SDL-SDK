@@ -4,3 +4,9 @@ SDK for the old [Motorola EZX](https://en.wikipedia.org/wiki/EZX_Linux) mobile p
 Initially hosted @ [mediafire.com](https://www.mediafire.com/folder/g3ggnrigelxrq/EZX_QTSDL_SDK).
 
 The targeted devices have a 240x320 resistive display and a Linux based OS.
+
+You can donate through PayPal at [brucelee.duckdns.org/donation/EZX-SDK_CPP-QT-SDL](http://brucelee.duckdns.org/donation/EZX-SDK_CPP-QT-SDL)
+
+    Since I can't directly add the PayPal donation button here, I've created a simple page
+    which has the Donate button.
+    
